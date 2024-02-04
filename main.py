@@ -1,31 +1,18 @@
 import pygame
-
-GRID_ROWS = 20
-GRID_COLS = 10
-BLOCK_SIZE = 30
-
-GRID_BACKGROUND_COLOR = (0, 0, 0)
-GRID_LINE_COLOR = (36, 36, 36)
-GRID_LINE_WIDTH = 1
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-
-BOARD_WIDTH = GRID_COLS * BLOCK_SIZE
-BOARD_HEIGHT = GRID_ROWS * BLOCK_SIZE
+import settings
 
 def main():
     pygame.init()
 
     # Set up the display
-    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    screen = pygame.display.set_mode((settings.SCREEN_WIDTH, settings.SCREEN_HEIGHT))
     pygame.display.set_caption("Tetris")
     
-    play_grid = pygame.Surface((BOARD_WIDTH, BOARD_HEIGHT))
-    play_grid.fill(GRID_BACKGROUND_COLOR)
+    play_grid = pygame.Surface((settings.BOARD_WIDTH, settings.BOARD_HEIGHT))
+    play_grid.fill(settings.GRID_BACKGROUND_COLOR)
     play_grid_center = (
-        (SCREEN_WIDTH-BOARD_WIDTH)/2,
-        (SCREEN_HEIGHT-BOARD_HEIGHT)/2
+        (settings.SCREEN_WIDTH-settings.BOARD_WIDTH)/2,
+        (settings.SCREEN_HEIGHT-settings.BOARD_HEIGHT)/2
     )
 
     # Main game loop
@@ -37,16 +24,16 @@ def main():
                 running = False
         
         # Draw vertical grid lines
-        for i in range(GRID_COLS):
-            x = i * BLOCK_SIZE
-            pygame.draw.line(play_grid, GRID_LINE_COLOR, (x, 0), (x, BOARD_HEIGHT), GRID_LINE_WIDTH)
-        pygame.draw.line(play_grid, GRID_LINE_COLOR, (BOARD_WIDTH-1, 0), (BOARD_WIDTH-1, BOARD_HEIGHT), GRID_LINE_WIDTH)
+        for i in range(settings.GRID_COLS):
+            x = i * settings.BLOCK_SIZE
+            pygame.draw.line(play_grid, settings.GRID_LINE_COLOR, (x, 0), (x, settings.BOARD_HEIGHT), settings.GRID_LINE_WIDTH)
+        pygame.draw.line(play_grid, settings.GRID_LINE_COLOR, (settings.BOARD_WIDTH-1, 0), (settings.BOARD_WIDTH-1, settings.BOARD_HEIGHT), settings.GRID_LINE_WIDTH)
         
         # Draw horizontal grid lines
-        for j in range(GRID_ROWS + 1):
-            y = j * BLOCK_SIZE
-            pygame.draw.line(play_grid, GRID_LINE_COLOR, (0, y), (BOARD_WIDTH, y), GRID_LINE_WIDTH)
-        pygame.draw.line(play_grid, GRID_LINE_COLOR, (0, BOARD_HEIGHT-1), (BOARD_WIDTH, BOARD_HEIGHT-1), GRID_LINE_WIDTH)
+        for j in range(settings.GRID_ROWS + 1):
+            y = j * settings.BLOCK_SIZE
+            pygame.draw.line(play_grid, settings.GRID_LINE_COLOR, (0, y), (settings.BOARD_WIDTH, y), settings.GRID_LINE_WIDTH)
+        pygame.draw.line(play_grid, settings.GRID_LINE_COLOR, (0, settings.BOARD_HEIGHT-1), (settings.BOARD_WIDTH, settings.BOARD_HEIGHT-1), settings.GRID_LINE_WIDTH)
 
         # Update the display
         screen.blit(play_grid, play_grid_center)

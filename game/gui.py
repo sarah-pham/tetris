@@ -11,15 +11,23 @@ class GUI:
     def draw_grid(self):
         # Draw vertical grid lines
         self.play_grid.fill(config.GRID_BACKGROUND_COLOR)
-        for i in range(config.GRID_COLS):
+        for i in range(config.GRID_COLS + 1):
             x = i * config.BLOCK_SIZE
-            pygame.draw.line(self.play_grid, config.GRID_LINE_COLOR, (x, 0), (x, config.BOARD_HEIGHT), config.GRID_LINE_WIDTH)
-        pygame.draw.line(self.play_grid, config.GRID_LINE_COLOR, (config.BOARD_WIDTH-1, 0), (config.BOARD_WIDTH-1, config.BOARD_HEIGHT), config.GRID_LINE_WIDTH)
+            if x == config.BOARD_WIDTH-1:
+                x -= 1 # Ensure that line is drawn within surface boundaries
+            pygame.draw.line(self.play_grid,
+                             color=config.GRID_LINE_COLOR,
+                             start_pos=(x, 0),
+                             end_pos=(x, config.BOARD_HEIGHT),
+                             width=config.GRID_LINE_WIDTH)
 
          # Draw horizontal grid lines
         for j in range(config.GRID_ROWS + 1):
             y = j * config.BLOCK_SIZE
-            pygame.draw.line(self.play_grid, config.GRID_LINE_COLOR, (0, y), (config.BOARD_WIDTH, y), config.GRID_LINE_WIDTH)
-        pygame.draw.line(self.play_grid, config.GRID_LINE_COLOR, (0, config.BOARD_HEIGHT-1), (config.BOARD_WIDTH, config.BOARD_HEIGHT-1), config.GRID_LINE_WIDTH)
+            pygame.draw.line(self.play_grid,
+                             color=config.GRID_LINE_COLOR,
+                             start_pos=(0, y),
+                             end_pos=(config.BOARD_WIDTH, y),
+                             width=config.GRID_LINE_WIDTH)
 
         self.screen.blit(self.play_grid, self.play_grid_center)

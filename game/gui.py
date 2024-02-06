@@ -23,7 +23,7 @@ class GUI:
         # Draw vertical grid lines
         self.grid.fill(config.GRID_BACKGROUND_COLOR)
         for i in range(config.GRID_COLS):
-            x = i * config.BLOCK_SIZE
+            x = i * config.CELL_SIZE
             pygame.draw.line(self.grid,
                              color=config.GRID_LINE_COLOR,
                              start_pos=(x, 0),
@@ -32,7 +32,7 @@ class GUI:
 
          # Draw horizontal grid lines
         for j in range(config.GRID_ROWS):
-            y = j * config.BLOCK_SIZE
+            y = j * config.CELL_SIZE
             pygame.draw.line(self.grid,
                              color=config.GRID_LINE_COLOR,
                              start_pos=(0, y),

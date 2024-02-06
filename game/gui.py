@@ -22,10 +22,8 @@ class GUI:
         """
         # Draw vertical grid lines
         self.grid.fill(config.GRID_BACKGROUND_COLOR)
-        for i in range(config.GRID_COLS + 1):
+        for i in range(config.GRID_COLS):
             x = i * config.BLOCK_SIZE
-            if x == config.GRID_WIDTH:
-                x -= 1 # Ensure that line is drawn within surface boundaries
             pygame.draw.line(self.grid,
                              color=config.GRID_LINE_COLOR,
                              start_pos=(x, 0),
@@ -33,10 +31,8 @@ class GUI:
                              width=config.GRID_LINE_WIDTH)
 
          # Draw horizontal grid lines
-        for j in range(config.GRID_ROWS + 1):
+        for j in range(config.GRID_ROWS):
             y = j * config.BLOCK_SIZE
-            if y == config.GRID_HEIGHT:
-                y -= 1 # Ensure that line is drawn within surface boundaries
             pygame.draw.line(self.grid,
                              color=config.GRID_LINE_COLOR,
                              start_pos=(0, y),

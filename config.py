@@ -23,3 +23,6 @@ BOARD_Y = (SCREEN_HEIGHT - BOARD_HEIGHT)/2
 GRID_BACKGROUND_COLOR = (0, 0, 0) # Color of the Tetris grid background
 GRID_LINE_COLOR = (36, 36, 36) # Color of the grid lines
 GRID_BORDER_COLOR = GRID_LINE_COLOR # Colour of Tetris grid border
+
+# Tetrimino configuration
+TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos

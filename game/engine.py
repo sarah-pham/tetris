@@ -16,6 +16,6 @@ class GameEngine:
                 if event.type == pygame.QUIT:
                     self.running = False
                     
-            self.gui.draw_grid()
+            self.gui.draw_board()
             pygame.display.flip()
             pygame.time.Clock().tick(60) # Limit frames per second

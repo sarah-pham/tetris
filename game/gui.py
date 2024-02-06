@@ -4,11 +4,22 @@ import config
 class GUI:
     def __init__(self, screen):
         self.screen = screen
-        self.grid = pygame.Surface((config.GRID_WIDTH, config.GRID_HEIGHT))
-        self.grid_center = ((config.SCREEN_WIDTH-config.GRID_WIDTH)/2,
-                                 (config.SCREEN_HEIGHT-config.GRID_HEIGHT)/2)
+        self.board = pygame.Surface((config.BOARD_WIDTH, config.BOARD_HEIGHT)) # Surface containing tetris grid and grid border
+        self.board_pos = (config.BOARD_X, config.BOARD_Y)
+        self.grid = pygame.Surface((config.GRID_WIDTH, config.GRID_HEIGHT)) # Surface for Tetris grid
+        self.grid_pos = (config.GRID_BORDER_WIDTH, config.GRID_BORDER_WIDTH)
+
+    def draw_board(self):
+        """Draws Tetris grid on the screen with a border.
+        """
+        self.board.fill(config.GRID_BORDER_COLOR)
+        self.draw_grid()
+        self.screen.blit(self.board, self.board_pos)
+
 
     def draw_grid(self):
+        """Draws Tetris grid on the board surface.
+        """
         # Draw vertical grid lines
         self.grid.fill(config.GRID_BACKGROUND_COLOR)
         for i in range(config.GRID_COLS + 1):
@@ -32,4 +43,4 @@ class GUI:
                              end_pos=(config.GRID_WIDTH, y),
                              width=config.GRID_LINE_WIDTH)
 
-        self.screen.blit(self.grid, self.grid_center)
+        self.board.blit(self.grid, self.grid_pos)

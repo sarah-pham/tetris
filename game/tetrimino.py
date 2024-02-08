@@ -1,7 +1,7 @@
 from config import TETRIMINO_START_COLUMN as START_COL
 
 class Tetrimino:
-    def __init__(self, cells, color):
+    def __init__(self, cells=[], color=None):
         self.cells = cells
         self.color = color
 

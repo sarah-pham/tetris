@@ -1,6 +1,7 @@
 import pygame
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, GRID_COLS, GRID_ROWS
-# from game.tetrimino import ZBlock
+from config import SCREEN_WIDTH, SCREEN_HEIGHT
+from game.tetrimino import ZBlock
+from game.grid import Grid
 
 from .gui import GUI
 
@@ -10,6 +11,8 @@ class GameEngine:
         pygame.display.set_caption("Tetris")
         self.gui = GUI(self.screen)
         self.running = True
+        self.grid = Grid()
+        self.awaiting_new_tet = True
 
     def run(self) -> None:
         while self.running:
@@ -18,13 +21,11 @@ class GameEngine:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            grid = [[None for col in range(GRID_COLS)] for row in range(GRID_ROWS)]
+            if self.awaiting_new_tet:
+                self.grid.spawn_tetrimino()
+                self.awaiting_new_tet = False
 
-            # tet = ZBlock()
-            # for (col, row) in tet.get_cells():
-            #     grid[row][col] = tet.get_color()
-
-            self.gui.draw_board(grid)
+            self.gui.draw_board(self.grid.grid)
 
             pygame.display.flip()
             pygame.time.Clock().tick(60) # Limit frames per second

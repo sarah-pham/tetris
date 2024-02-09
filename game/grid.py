@@ -1,4 +1,3 @@
-import random
 from config import GRID_COLS, GRID_ROWS
 from .tetrimino import Tetrimino
 
@@ -8,11 +7,11 @@ class Grid:
         self.cols = cols
         self.grid = [[None for _ in range(cols)] for _ in range(rows)]
 
-    def spawn_tetrimino(self) -> None:
-        """Creates a Tetrimino of a random class and it adds to the grid.
-        """
-        random_tetrimino_class = random.choice(Tetrimino.__subclasses__())
-        tet = random_tetrimino_class()
+    def is_available(self, x: int, y: int) -> bool:
+        if x < 0 or x >= self.cols or y < 0 or y >= self.rows:
+            return False
 
-        for (x, y) in tet.get_cells():
-            self.grid[y][x] = tet.get_color()
+        return self.grid[y][x] == None
+
+    def set(self, x: int, y: int, color) -> None:
+        self.grid[y][x] = color

@@ -27,4 +27,4 @@ GRID_BORDER_COLOR = GRID_LINE_COLOR # Colour of Tetris grid border
 # Tetrimino configuration
 TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
 
-DROP_INTERVAL = 0.2 # Time taken in milliseconds for tetrimino to drop down by 1 position
+DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position

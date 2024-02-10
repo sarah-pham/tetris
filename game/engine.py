@@ -2,7 +2,7 @@ import pygame
 import random
 import time
 from typing import Optional
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, DROP_INTERVAL
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, DROP_INTERVAL, AUTO_RESTART
 from .grid import Grid
 from .tetrimino import Tetrimino
 from .gui import GUI
@@ -10,13 +10,12 @@ from .gui import GUI
 
 class GameEngine:
     def __init__(self) -> None:
+        self.running = True
+        self.game_over = False
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Tetris")
         self.gui = GUI(self.screen)
-        self.running = True
-        self.grid = Grid()
-        self.last_drop_time = time.time()
-        self.tetrimino: Optional[Tetrimino] = None
+        self.reset_game_state()
 
     def run(self) -> None:
         while self.running:
@@ -35,10 +34,26 @@ class GameEngine:
             # Handle the automatic dropping of the current tetrimino
             self.handle_automatic_dropping(self.tetrimino)
 
+            # Check and handle game over
+            if GameEngine.check_game_over(self.grid):
+                self.game_over = True
+                if AUTO_RESTART:
+                    self.reset_game_state()
+                else:
+                    self.running = False
+
             # Limit frames per second
             pygame.time.Clock().tick(60)
 
-    def handle_automatic_dropping(self, tetrimino: Tetrimino):
+    def reset_game_state(self) -> None:
+        """
+        Resets the game state to start a new session.
+        """
+        self.grid = Grid()
+        self.tetrimino: Optional[Tetrimino] = None
+        self.last_drop_time = time.time()
+
+    def handle_automatic_dropping(self, tetrimino: Tetrimino) -> None:
         """
         Automatically moves the Tetrimino down every DROP_INTERVAL seconds. If
         it cannot move further, the Tetrimino is placed on the grid, marking its
@@ -52,6 +67,13 @@ class GameEngine:
                 self.tetrimino = None
 
             self.last_drop_time = time.time()
+
+    @staticmethod
+    def check_game_over(grid: Grid) -> bool:
+        for x in grid.grid[0]:
+            if x != None:
+                return True
+        return False
 
     @staticmethod
     def draw_game_state(gui: GUI, grid: Grid, tetrimino: Tetrimino) -> None:

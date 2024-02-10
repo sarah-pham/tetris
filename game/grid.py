@@ -1,3 +1,4 @@
+from typing import NamedTuple, Optional, Tuple, List
 from config import GRID_COLS, GRID_ROWS
 from .tetrimino import Tetrimino
 

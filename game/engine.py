@@ -24,6 +24,16 @@ class GameEngine:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                if event.type == pygame.KEYDOWN and self.tetrimino != None:
+                    if event.key == pygame.K_LEFT and GameEngine.can_move_left(self.grid, self.tetrimino):
+                        self.tetrimino.move_left()
+                    if event.key == pygame.K_RIGHT and GameEngine.can_move_right(self.grid, self.tetrimino):
+                        self.tetrimino.move_right()
+                    if event.key == pygame.K_DOWN and GameEngine.can_move_down(self.grid, self.tetrimino):
+                        self.tetrimino.move_down()
+                    if event.key == pygame.K_SPACE:
+                        while GameEngine.can_move_down(self.grid, self.tetrimino):
+                            self.tetrimino.move_down()
 
             # Generate a new tetrimino if there is no current one
             if self.tetrimino == None:
@@ -85,6 +95,28 @@ class GameEngine:
         """
         for (x, y) in tet.coords:
             if not grid.is_available(x, y + 1):
+                return False
+        return True
+
+    @staticmethod
+    def can_move_left(grid: Grid, tet: Tetrimino) -> bool:
+        """
+        Returns True if the Tetrimino can move left by one position on the grid
+        without overlapping existing blocks, False otherwise.
+        """
+        for (x, y) in tet.coords:
+            if not grid.is_available(x - 1, y):
+                return False
+        return True
+    
+    @staticmethod
+    def can_move_right(grid: Grid, tet: Tetrimino) -> bool:
+        """
+        Returns True if the Tetrimino can move right by one position on the grid
+        without overlapping existing blocks, False otherwise.
+        """
+        for (x, y) in tet.coords:
+            if not grid.is_available(x + 1, y):
                 return False
         return True
 

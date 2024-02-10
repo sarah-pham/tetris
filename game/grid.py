@@ -1,6 +1,4 @@
-from typing import NamedTuple, Optional, Tuple, List
 from config import GRID_COLS, GRID_ROWS
-from .tetrimino import Tetrimino
 
 class Grid:
     def __init__(self, rows=GRID_ROWS, cols=GRID_COLS) -> None:

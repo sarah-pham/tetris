@@ -24,15 +24,7 @@ class GameEngine:
                 if event.type == pygame.QUIT:
                     self.running = False
                 if event.type == pygame.KEYDOWN and self.tetrimino != None:
-                    if event.key == pygame.K_LEFT and GameEngine.can_move_left(self.grid, self.tetrimino):
-                        self.tetrimino.move_left()
-                    if event.key == pygame.K_RIGHT and GameEngine.can_move_right(self.grid, self.tetrimino):
-                        self.tetrimino.move_right()
-                    if event.key == pygame.K_DOWN and GameEngine.can_move_down(self.grid, self.tetrimino):
-                        self.tetrimino.move_down()
-                    if event.key == pygame.K_SPACE:
-                        while GameEngine.can_move_down(self.grid, self.tetrimino):
-                            self.tetrimino.move_down()
+                    self.handle_key_pressed(event)
 
             # Generate a new tetrimino if there is no current one
             if self.tetrimino == None:
@@ -54,6 +46,20 @@ class GameEngine:
 
             # Limit frames per second
             pygame.time.Clock().tick(60)
+        
+    def handle_key_pressed(self, event):
+        if event.key == pygame.K_LEFT:
+            if GameEngine.can_move_left(self.grid, self.tetrimino):
+                self.tetrimino.move_left()
+        if event.key == pygame.K_RIGHT:
+            if GameEngine.can_move_right(self.grid, self.tetrimino):
+                self.tetrimino.move_right()
+        if event.key == pygame.K_DOWN:
+            if GameEngine.can_move_down(self.grid, self.tetrimino):
+                self.tetrimino.move_down()
+        if event.key == pygame.K_SPACE:
+            while GameEngine.can_move_down(self.grid, self.tetrimino):
+                self.tetrimino.move_down()
 
     def reset_game_state(self) -> None:
         """

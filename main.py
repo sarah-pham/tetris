@@ -1,4 +1,3 @@
-import os
 import pygame
 from game.engine import GameEngine
 

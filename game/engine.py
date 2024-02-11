@@ -23,7 +23,7 @@ class GameEngine:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-                if event.type == pygame.KEYDOWN and self.tetrimino != None:
+                if event.type == pygame.KEYDOWN:
                     self.handle_key_pressed(event)
 
             # Generate a new tetrimino if there is no current one
@@ -48,6 +48,8 @@ class GameEngine:
             pygame.time.Clock().tick(60)
         
     def handle_key_pressed(self, event):
+        if self.tetrimino == None:
+            return
         if event.key == pygame.K_LEFT:
             if GameEngine.can_move_left(self.grid, self.tetrimino):
                 self.tetrimino.move_left()

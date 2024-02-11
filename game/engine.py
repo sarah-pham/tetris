@@ -1,4 +1,5 @@
 import pygame
+from pygame.event import Event
 import random
 import time
 from typing import Optional
@@ -47,7 +48,7 @@ class GameEngine:
             # Limit frames per second
             pygame.time.Clock().tick(60)
 
-    def handle_key_pressed(self, event):
+    def handle_key_pressed(self, event: Event) -> None:
         if self.tetrimino == None:
             return
 

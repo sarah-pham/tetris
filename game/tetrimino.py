@@ -10,6 +10,21 @@ class Tetrimino:
         """
         for i in range(len(self.coords)):
             self.coords[i][1] += 1
+        # should also implement hard drop
+
+    def move_left(self):
+
+        for i in range(len(self.coords)):
+            self.coords[i][0] -= 1
+
+        return 0
+
+    def move_right(self):
+
+        for i in range(len(self.coords)):
+            self.coords[i][0] += 1
+
+        return 0
 
 class IBlock(Tetrimino):
     def __init__(self):

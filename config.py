@@ -4,6 +4,7 @@ AUTO_RESTART = os.getenv('AUTO_RESTART', 'false').lower() == 'true'
 # Display settings
 SCREEN_WIDTH = 600 # Width of the entire game screen (pixels)
 SCREEN_HEIGHT = 800 # Height of the entire game screen (pixels)
+FPS = 60 # Frame rate per second limit
 
 # Tetris grid configuration
 GRID_ROWS = 20 # Number of rows in the Tetris grid

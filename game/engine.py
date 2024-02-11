@@ -46,7 +46,7 @@ class GameEngine:
                     self.running = False
 
             # Limit frames per second
-            pygame.time.Clock().tick(60)
+            pygame.time.Clock().tick(FPS)
 
     def handle_key_pressed(self, event: Event) -> None:
         if self.tetrimino == None:

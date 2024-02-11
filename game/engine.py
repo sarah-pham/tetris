@@ -2,7 +2,7 @@ import pygame
 import random
 import time
 from typing import Optional
-from config import SCREEN_WIDTH, SCREEN_HEIGHT, DROP_INTERVAL, AUTO_RESTART
+from config import SCREEN_WIDTH, SCREEN_HEIGHT, FPS, DROP_INTERVAL, AUTO_RESTART
 from .grid import Grid
 from .tetrimino import Tetrimino
 from .gui import GUI

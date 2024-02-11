@@ -1,4 +1,5 @@
 import pygame
+from pygame.event import Event
 import random
 import time
 from typing import Optional
@@ -45,20 +46,24 @@ class GameEngine:
                     self.running = False
 
             # Limit frames per second
-            pygame.time.Clock().tick(60)
-        
-    def handle_key_pressed(self, event):
+            pygame.time.Clock().tick(FPS)
+
+    def handle_key_pressed(self, event: Event) -> None:
         if self.tetrimino == None:
             return
-        if event.key == pygame.K_LEFT:
-            if GameEngine.can_move_left(self.grid, self.tetrimino):
+
+        # Handle left, right and down movements
+        if event.key == pygame.K_LEFT and \
+            GameEngine.can_move_left(self.grid, self.tetrimino):
                 self.tetrimino.move_left()
-        if event.key == pygame.K_RIGHT:
-            if GameEngine.can_move_right(self.grid, self.tetrimino):
+        if event.key == pygame.K_RIGHT and \
+            GameEngine.can_move_right(self.grid, self.tetrimino):
                 self.tetrimino.move_right()
-        if event.key == pygame.K_DOWN:
-            if GameEngine.can_move_down(self.grid, self.tetrimino):
+        if event.key == pygame.K_DOWN and \
+            GameEngine.can_move_down(self.grid, self.tetrimino):
                 self.tetrimino.move_down()
+
+        # Handle hard drop
         if event.key == pygame.K_SPACE:
             while GameEngine.can_move_down(self.grid, self.tetrimino):
                 self.tetrimino.move_down()
@@ -138,29 +143,7 @@ class GameEngine:
             if not grid.is_available(x - 1, y):
                 return False
         return True
-    
-    @staticmethod
-    def can_move_right(grid: Grid, tet: Tetrimino) -> bool:
-        """
-        Returns True if the Tetrimino can move right by one position on the grid
-        without overlapping existing blocks, False otherwise.
-        """
-        for (x, y) in tet.coords:
-            if not grid.is_available(x + 1, y):
-                return False
-        return True
 
-    @staticmethod
-    def can_move_left(grid: Grid, tet: Tetrimino) -> bool:
-        """
-        Returns True if the Tetrimino can move left by one position on the grid
-        without overlapping existing blocks, False otherwise.
-        """
-        for (x, y) in tet.coords:
-            if not grid.is_available(x - 1, y):
-                return False
-        return True
-    
     @staticmethod
     def can_move_right(grid: Grid, tet: Tetrimino) -> bool:
         """

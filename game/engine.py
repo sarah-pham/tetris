@@ -155,28 +155,6 @@ class GameEngine:
         return True
 
     @staticmethod
-    def can_move_left(grid: Grid, tet: Tetrimino) -> bool:
-        """
-        Returns True if the Tetrimino can move left by one position on the grid
-        without overlapping existing blocks, False otherwise.
-        """
-        for (x, y) in tet.coords:
-            if not grid.is_available(x - 1, y):
-                return False
-        return True
-
-    @staticmethod
-    def can_move_right(grid: Grid, tet: Tetrimino) -> bool:
-        """
-        Returns True if the Tetrimino can move right by one position on the grid
-        without overlapping existing blocks, False otherwise.
-        """
-        for (x, y) in tet.coords:
-            if not grid.is_available(x + 1, y):
-                return False
-        return True
-
-    @staticmethod
     def put(grid: Grid, tet: Tetrimino) -> None:
         """
         Places the Tetrimino on the grid.

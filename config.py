@@ -11,7 +11,7 @@ GRID_ROWS = 20 # Number of rows in the Tetris grid
 GRID_COLS = 10 # Number of columns in the Tetris grid
 BLOCK_SIZE = 30 # Size of each block within the grid (pixels)
 GRID_LINE_WIDTH = 1 # Width of the grid lines (pixels)
-GRID_BORDER_WIDTH = 3 # Width of the border around the Tetris grid (pixels)
+GRID_BORDER_WIDTH = 5 # Width of the border around the Tetris grid (pixels)
 
 # Calculated grid size
 GRID_WIDTH = GRID_COLS * BLOCK_SIZE # Total width of grid (pixels)

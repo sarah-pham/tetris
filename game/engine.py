@@ -11,7 +11,10 @@ from config import (
     AUTO_RESTART,
 )
 from .grid import Grid
-from .tetrimino import Tetrimino
+from .tetrimino import (
+    Tetrimino,
+    TETRIMINO_CLASSES
+)
 from .gui import GUI
 
 
@@ -44,7 +47,7 @@ class GameEngine:
             pygame.K_RIGHT: self.move_tetrimino_right,
             pygame.K_DOWN: self.move_tetrimino_down,
             pygame.K_SPACE: self.handle_hard_drop,
-            pygame.K_ESCAPE: self.toggle_pause
+            pygame.K_ESCAPE: self.toggle_pause,
         }
 
         if event.key in key_actions:
@@ -95,7 +98,7 @@ class GameEngine:
 
         # Overlay the current tetrimino on the grid
         if self.tetrimino is not None:
-            for x, y in self.tetrimino.coords:
+            for x, y in self.tetrimino.absolute_coords:
                 self.gui.draw_block(x, y, self.tetrimino.color)
 
         # Update the display
@@ -106,8 +109,8 @@ class GameEngine:
         """
         Returns a Tetrimino instance of a randomly selected class.
         """
-        random_tetrimino_class = random.choice(Tetrimino.__subclasses__())
-        tetrimino = random_tetrimino_class()
+        RandomTetriminoClass = random.choice(TETRIMINO_CLASSES)
+        tetrimino = RandomTetriminoClass()
         return tetrimino
 
     def check_and_handle_game_over(self) -> None:
@@ -138,7 +141,7 @@ class GameEngine:
             return False
 
         # Check if any cells of the Tetrimino are blocked from below
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x, y + 1):
                 return False  # Immediately return False if blocked
 
@@ -157,7 +160,7 @@ class GameEngine:
         if self.tetrimino is None:
             return False
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x - 1, y):
                 return False
 
@@ -176,7 +179,7 @@ class GameEngine:
         if self.tetrimino is None:
             return False
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x + 1, y):
                 return False
 
@@ -196,7 +199,7 @@ class GameEngine:
         """
         assert self.tetrimino is not None
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             self.grid.set(x, y, self.tetrimino.color)
 
     def toggle_pause(self) -> None:

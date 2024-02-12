@@ -98,6 +98,8 @@ class GameEngine:
             for x, y in self.tetrimino.coords:
                 self.gui.draw_block(x, y, self.tetrimino.color)
 
+        self.gui.draw_gridlines()
+
         # Update the display
         self.gui.update_display()
 

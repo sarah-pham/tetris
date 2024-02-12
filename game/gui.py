@@ -48,8 +48,6 @@ class GUI:
                 if grid[y][x] != None:
                     self.draw_block(x, y, grid[y][x])
 
-        self.draw_gridlines()
-
     def draw_gridlines(self):
         # Draw vertical grid lines
         for i in range(GRID_COLS):

@@ -26,8 +26,9 @@ class GameEngine:
     def run(self) -> None:
         while self.running:
             self.handle_events()
-            self.update_game_state()
-            self.draw_game_state()
+            if not self.paused:
+                self.update_game_state()
+                self.draw_game_state()
             pygame.time.Clock().tick(FPS)
 
     def handle_events(self):
@@ -42,7 +43,8 @@ class GameEngine:
             pygame.K_LEFT: self.move_tetrimino_left,
             pygame.K_RIGHT: self.move_tetrimino_right,
             pygame.K_DOWN: self.move_tetrimino_down,
-            pygame.K_SPACE: self.handle_hard_drop
+            pygame.K_SPACE: self.handle_hard_drop,
+            pygame.K_ESCAPE: self.toggle_pause
         }
 
         if event.key in key_actions:
@@ -63,6 +65,7 @@ class GameEngine:
         Resets the game state to start a new session.
         """
         self.active_game = True
+        self.paused = False
         self.grid = Grid()
         self.tetrimino: Optional[Tetrimino] = None
         self.last_drop_time = time.time()
@@ -195,3 +198,8 @@ class GameEngine:
 
         for x, y in self.tetrimino.coords:
             self.grid.set(x, y, self.tetrimino.color)
+
+    def toggle_pause(self) -> None:
+        self.paused = not self.paused
+        if self.paused:
+            self.gui.draw_pause()

@@ -18,6 +18,8 @@ from config import (
     BLOCK_SIZE,
     PAUSE_MASK_COLOR,
     PAUSE_MASK_ALPHA,
+    TITLE_X,
+    TITLE_Y,
 )
 
 
@@ -28,6 +30,11 @@ class GUI:
         self.board_pos = (BOARD_X, BOARD_Y)
         self.grid_surface = Surface((GRID_WIDTH, GRID_HEIGHT))  # Surface for Tetris grid
         self.grid_surface_pos = (GRID_BORDER_WIDTH, GRID_BORDER_WIDTH)
+        self.load_images()
+
+    def load_images(self):
+        self.graphics = {}
+        self.graphics["title"] = pygame.image.load('assets/images/title.png')
 
     def draw_board(self, grid):
         """
@@ -35,6 +42,7 @@ class GUI:
         """
         self.board.fill(GRID_BORDER_COLOR)
         self.draw_grid(grid)
+        self.draw_title()
 
     def draw_grid(self, grid):
         """
@@ -68,6 +76,9 @@ class GUI:
             color=color,
             rect=Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
         )
+
+    def draw_title(self):
+        self.screen.blit(self.graphics['title'], (TITLE_X, TITLE_Y));
 
     def draw_pause(self) -> None:
         """

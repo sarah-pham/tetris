@@ -39,7 +39,7 @@ class GameEngine:
                 self.handle_key_pressed(event)
 
     def handle_key_pressed(self, event: Event) -> None:
-        key_actions = {
+        active_key_actions = {
             pygame.K_LEFT: self.move_tetrimino_left,
             pygame.K_RIGHT: self.move_tetrimino_right,
             pygame.K_DOWN: self.move_tetrimino_down,
@@ -47,8 +47,16 @@ class GameEngine:
             pygame.K_ESCAPE: self.toggle_pause
         }
 
-        if event.key in key_actions:
-            key_actions[event.key]()
+        paused_key_actions = {
+            pygame.K_ESCAPE: self.toggle_pause
+        }
+
+        if self.paused:
+            if event.key in paused_key_actions:
+                paused_key_actions[event.key]()
+        else:
+            if event.key in active_key_actions:
+                active_key_actions[event.key]()
 
     def update_game_state(self) -> None:
         if not self.active_game:

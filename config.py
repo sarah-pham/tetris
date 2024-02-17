@@ -37,8 +37,8 @@ TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
 DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position
 
 # Graphics
-TITLE_HEIGHT = 50
-TITLE_WIDTH = 330
-PAUSED_ASPECT_RATIO = 6.5
-PAUSED_HEIGHT = 30
-PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO
+TITLE_HEIGHT = 50 # Height of TETRIS Title on screen (in pixels)
+TITLE_WIDTH = 330 # Width of TETRIS Title on screen (in pixels)
+PAUSED_ASPECT_RATIO = 6.5 # Aspect ratio of PAUSED graphic
+PAUSED_HEIGHT = 30 # Height of PAUSED graphic (in pixels)
+PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO # Width of PAUSED graphic (in pixels)

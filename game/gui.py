@@ -18,8 +18,10 @@ from config import (
     BLOCK_SIZE,
     PAUSE_MASK_COLOR,
     PAUSE_MASK_ALPHA,
-    TITLE_X,
-    TITLE_Y,
+    TITLE_HEIGHT,
+    TITLE_WIDTH,
+    PAUSED_WIDTH,
+    PAUSED_HEIGHT,
 )
 
 
@@ -33,8 +35,24 @@ class GUI:
         self.load_images()
 
     def load_images(self):
-        self.graphics = {}
-        self.graphics["title"] = pygame.image.load('assets/images/title.png')
+        self.active_images = []
+        self.paused_images = []
+
+        title_image = pygame.image.load("assets/images/title.png")
+        title_image = pygame.transform.scale(title_image, (TITLE_WIDTH, TITLE_HEIGHT))
+        title_image_rect = title_image.get_rect(topleft=(
+            (BOARD_WIDTH - TITLE_WIDTH) / 2 + BOARD_X,
+            (BOARD_Y - TITLE_HEIGHT) / 2
+        ))
+        self.active_images.append((title_image, title_image_rect))
+
+        paused_image = pygame.image.load("assets/images/paused.png")
+        paused_image = pygame.transform.scale(paused_image, (PAUSED_WIDTH, PAUSED_HEIGHT))
+        title_image_rect = title_image.get_rect(topleft=(
+            (BOARD_WIDTH - PAUSED_WIDTH) / 2,
+            (BOARD_HEIGHT) / 4
+        ))
+        self.paused_images.append((paused_image, title_image_rect))
 
     def draw_board(self, grid):
         """
@@ -42,7 +60,6 @@ class GUI:
         """
         self.board.fill(GRID_BORDER_COLOR)
         self.draw_grid(grid)
-        self.draw_title()
 
     def draw_grid(self, grid):
         """
@@ -77,8 +94,9 @@ class GUI:
             rect=Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
         )
 
-    def draw_title(self):
-        self.screen.blit(self.graphics['title'], (TITLE_X, TITLE_Y));
+    def draw_game_images(self):
+        for img in self.active_images:
+            self.screen.blit(img[0], img[1])
 
     def draw_pause(self) -> None:
         """
@@ -88,7 +106,12 @@ class GUI:
         mask.fill(PAUSE_MASK_COLOR)
         mask.set_alpha(PAUSE_MASK_ALPHA)
         self.grid_surface.blit(mask, (0, 0))
+        self.draw_paused_elements()
         self.update_display()
+
+    def draw_paused_elements(self) -> None:
+        for img in self.paused_images:
+            self.grid_surface.blit(img[0], img[1])
 
     def update_display(self) -> None:
         """

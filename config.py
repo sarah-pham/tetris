@@ -28,12 +28,6 @@ GRID_BACKGROUND_COLOR = (0, 0, 0) # Color of the Tetris grid background
 GRID_LINE_COLOR = (36, 36, 36) # Color of the grid lines
 GRID_BORDER_COLOR = GRID_LINE_COLOR # Colour of Tetris grid border
 
-# Title size and position
-TITLE_WIDTH = 200
-TITLE_HEIGHT = 30
-TITLE_X = (SCREEN_WIDTH - TITLE_WIDTH)/2
-TITLE_Y = (BOARD_Y - TITLE_HEIGHT)/2
-
 # config.py
 PAUSE_MASK_COLOR = (150, 150, 150)
 PAUSE_MASK_ALPHA = 110
@@ -41,3 +35,10 @@ PAUSE_MASK_ALPHA = 110
 # Tetrimino configuration
 TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
 DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position
+
+# Graphics
+TITLE_HEIGHT = 50
+TITLE_WIDTH = 330
+PAUSED_ASPECT_RATIO = 6.5
+PAUSED_HEIGHT = 30
+PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO

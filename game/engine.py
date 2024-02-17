@@ -21,7 +21,6 @@ class GameEngine:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Tetris")
         self.gui = GUI(self.screen)
-        self.set_buttons()
         self.reset_game()
 
     def run(self) -> None:
@@ -38,8 +37,6 @@ class GameEngine:
                 self.running = False
             elif event.type == pygame.KEYDOWN:
                 self.handle_key_pressed(event)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                self.handle_button_pressed(event)
 
     def handle_key_pressed(self, event: Event) -> None:
         key_actions = {
@@ -52,12 +49,6 @@ class GameEngine:
 
         if event.key in key_actions:
             key_actions[event.key]()
-
-    def set_buttons(self):
-        pass
-
-    def handle_button_pressed(self, event: Event) -> None:
-        pass
 
     def update_game_state(self) -> None:
         if not self.active_game:

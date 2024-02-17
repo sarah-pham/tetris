@@ -35,24 +35,38 @@ class GUI:
         self.load_images()
 
     def load_images(self):
-        self.active_images = []
-        self.paused_images = []
+        """
+        Loads external images into games. Images are saved in 2 lists:
+            - active_images = for images to be drawn during gameplay
+            - paused_images = for images to be drawn when game is paused
+        Images are saved as a tuple (image, position)
+        """
+        self.load_active_images()
+        self.load_paused_images()
 
+    def load_active_images(self):
+        self.active_images = [] # images to be drawn when game is active
+
+        # Load and save title image and position
         title_image = pygame.image.load("assets/images/title.png")
         title_image = pygame.transform.scale(title_image, (TITLE_WIDTH, TITLE_HEIGHT))
-        title_image_rect = title_image.get_rect(topleft=(
+        title_image_position = (
             (BOARD_WIDTH - TITLE_WIDTH) / 2 + BOARD_X,
             (BOARD_Y - TITLE_HEIGHT) / 2
-        ))
-        self.active_images.append((title_image, title_image_rect))
+        )
+        self.active_images.append((title_image, title_image_position))
 
+    def load_paused_images(self):
+        self.paused_images = [] # images to be drawn when game is paused
+
+        # Load and save 'paused' image and position
         paused_image = pygame.image.load("assets/images/paused.png")
         paused_image = pygame.transform.scale(paused_image, (PAUSED_WIDTH, PAUSED_HEIGHT))
-        title_image_rect = title_image.get_rect(topleft=(
+        paused_image_position = (
             (BOARD_WIDTH - PAUSED_WIDTH) / 2,
             (BOARD_HEIGHT) / 4
-        ))
-        self.paused_images.append((paused_image, title_image_rect))
+        )
+        self.paused_images.append((paused_image, paused_image_position))
 
     def draw_board(self, grid):
         """
@@ -95,6 +109,10 @@ class GUI:
         )
 
     def draw_game_images(self):
+        """
+        Draws images loaded from files.
+        Images are saved as tuples in the format (image, position)
+        """
         for img in self.active_images:
             self.screen.blit(img[0], img[1])
 

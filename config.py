@@ -11,7 +11,7 @@ GRID_ROWS = 20 # Number of rows in the Tetris grid
 GRID_COLS = 10 # Number of columns in the Tetris grid
 BLOCK_SIZE = 30 # Size of each block within the grid (pixels)
 GRID_LINE_WIDTH = 1 # Width of the grid lines (pixels)
-GRID_BORDER_WIDTH = 3 # Width of the border around the Tetris grid (pixels)
+GRID_BORDER_WIDTH = 5 # Width of the border around the Tetris grid (pixels)
 
 # Calculated grid size
 GRID_WIDTH = GRID_COLS * BLOCK_SIZE # Total width of grid (pixels)
@@ -34,5 +34,11 @@ PAUSE_MASK_ALPHA = 110
 
 # Tetrimino configuration
 TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
-
 DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position
+
+# Graphics
+TITLE_HEIGHT = 50 # Height of TETRIS Title on screen (in pixels)
+TITLE_WIDTH = 330 # Width of TETRIS Title on screen (in pixels)
+PAUSED_ASPECT_RATIO = 6.5 # Aspect ratio of PAUSED graphic
+PAUSED_HEIGHT = 30 # Height of PAUSED graphic (in pixels)
+PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO # Width of PAUSED graphic (in pixels)

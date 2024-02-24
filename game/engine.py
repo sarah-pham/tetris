@@ -206,39 +206,58 @@ class GameEngine:
             pass
 
     def rotate_right(self):
+        """
+        Rotates the tetrimino right, and gets new relative coordinates and kick data
+        Updates rotate state if rotation is successful
+        """
         if self.tetrimino is None:
             return
 
         new_relative_coords, kicks = self.tetrimino.rotate_right_fn()
-        self.rotate_tetrimino(new_relative_coords, kicks)
+        if self.kick_tetrimino(new_relative_coords, kicks):
+            self.tetrimino.rotate_state = (self.tetrimino.rotate_state + 1) % 4
 
     def rotate_left(self):
+        """
+        Rotates the tetrimino left, and checks kick positions
+        Updates rotate state if rotation is successful
+        """
         if self.tetrimino is None:
             return
 
         new_relative_coords, kicks = self.tetrimino.rotate_left_fn()
-        self.rotate_tetrimino(new_relative_coords, kicks)
+        if self.kick_tetrimino(new_relative_coords, kicks):
+            self.tetrimino.rotate_state = (self.tetrimino.rotate_state - 1) % 4
 
-    def rotate_tetrimino(self, new_relative_coords, kicks):
+    def kick_tetrimino(self, new_relative_coords: list, kicks: list) -> bool:
+        """
+        Checks each set of kicks to see where rotated tetrimino can be placed
+
+        Returns:
+            bool: True if the tetrimino is successfully rotated and placed;
+                  False otherwise
+        """
         if self.tetrimino is None:
             return
 
-        kick_set = kicks[self.tetrimino.rotate_state]
-        x = self.tetrimino.x
-        y = self.tetrimino.y
-
-        for kick_x, kick_y in kick_set:
+        # loop through each kick to see if any are successful
+        for kick_x, kick_y in kicks:
             can_rotate = True
             for rel_x, rel_y in new_relative_coords:
                 if not self.grid.is_available(
-                    x + kick_x + rel_x, y + kick_y + rel_y
+                    self.tetrimino.x + kick_x + rel_x,
+                    self.tetrimino.y + kick_y + rel_y
                 ):
                     can_rotate = False
+
+            # rotate tetrimino if kick is successful
             if can_rotate:
                 self.tetrimino.update_position_and_coords(
                     kick_x, kick_y, new_relative_coords
-                    )
+                )
                 break
+
+        return can_rotate
 
     def place_tetrimino_on_grid(self) -> None:
         """

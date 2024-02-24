@@ -14,6 +14,7 @@ class Tetrimino:
         self.x = x
         self.y = y
         self.relative_coords = relative_coords
+        self.rotate_state = 0
         self.color=color
         self.rotate_left_fn = rotate_left_fn
         self.rotate_right_fn = rotate_right_fn
@@ -48,23 +49,93 @@ class Tetrimino:
         for i in range(len(self.absolute_coords)):
             self.absolute_coords[i][0] += 1
 
-    def calculate_rotate_right_2x2(self):
-        pass
+    def calculate_rotate_right_2x2(self) -> tuple:
+        new_relative_coords = self.relative_coords
+        kicks = [
+            [(0, 0)],
+            [(0, 0)],
+            [(0, 0)],
+            [(0, 0)]
+        ]
+        return new_relative_coords, kicks
 
-    def calculate_rotate_left_2x2(self):
-        pass
+    def calculate_rotate_left_2x2(self) -> tuple:
+        new_relative_coords = self.relative_coords
+        kicks = [
+            [(0, 0)],
+            [(0, 0)],
+            [(0, 0)],
+            [(0, 0)]
+        ]
+        return new_relative_coords, kicks
 
-    def calculate_rotate_right_3x3(self):
-        pass
+    def calculate_rotate_right_3x3(self) -> tuple:
+        new_relative_coords = [
+            [2 - coord[1], coord[0]] for coord in self.relative_coords
+        ]
 
-    def calculate_rotate_left_3x3(self):
-        pass
+        kicks = [
+            [(0, 0), (-1, 0), (-1,  1), (0, -2), (-1, -2)],
+            [(0, 0), ( 1, 0), ( 1, -1), (0,  2), ( 1,  2)],
+            [(0, 0), ( 1, 0), ( 1,  1), (0, -2), ( 1, -2)],
+            [(0, 0), (-1, 0), (-1, -1), (0,  2), (-1,  2)]
+        ]
 
-    def calculate_rotate_right_4x4(self):
-        pass
+        return new_relative_coords, kicks
 
-    def calculate_rotate_left_4x4(self):
-        pass
+
+    def calculate_rotate_left_3x3(self) -> tuple:
+        new_relative_coords = [
+            [coord[1], 2 - coord[0]] for coord in self.relative_coords
+        ]
+
+        kicks = [
+            [(0, 0), ( 2, 0), ( 1, -1), (0,  2), ( 1,  2)],
+            [(0, 0), (-1, 0), (-1,  1), (0, -2), (-1, -2)],
+            [(0, 0), (-1, 0), (-1, -1), (0,  2), (-1,  2)],
+            [(0, 0), ( 1, 0), ( 1,  1), (0, -2), ( 1, -2)]
+        ]
+
+        return new_relative_coords, kicks
+
+    def calculate_rotate_right_4x4(self) -> tuple:
+        """
+        Calculate
+        """
+        new_relative_coords = [
+            [3 - coord[1], coord[0]] for coord in self.relative_coords
+        ]
+
+        kicks = [
+            [(0, 0), (-2, 0), ( 1, 0), (-2, -1), ( 1,  2)],
+            [(0, 0), (-1, 0), ( 2, 0), (-1,  2), ( 2, -1)],
+            [(0, 0), ( 2, 0), (-1, 0), ( 2,  1), (-1, -2)],
+            [(0, 0), ( 1, 0), (-2, 0), ( 1, -2), (-2,  1)]
+        ]
+
+        return new_relative_coords, kicks
+
+    def calculate_rotate_left_4x4(self) -> tuple:
+        new_relative_coords = [
+            [coord[1], 3 - coord[0]] for coord in self.relative_coords
+        ]
+
+        kicks = [
+            [(0, 0), ( 2, 0), (-1, 0), ( 2,  1), (-1, -2)],
+            [(0, 0), ( 1, 0), (-2, 0), ( 1, -2), (-2,  1)],
+            [(0, 0), (-2, 0), ( 1, 0), (-2, -1), ( 1,  2)],
+            [(0, 0), (-1, 0), ( 2, 0), (-1,  2), ( 2, -1)]
+        ]
+
+        return new_relative_coords, kicks
+
+    def update_position_and_coords(self, kick_x, kick_y, new_relative_coords) -> None:
+        self.x += kick_x
+        self.y += kick_y
+        self.relative_coords = new_relative_coords
+        self.rotate_state = (self.rotate_state + 1) % 4
+        self.update_absolute_coords()
+
 
 class IBlock(Tetrimino):
     def __init__(self):

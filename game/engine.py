@@ -42,24 +42,25 @@ class GameEngine:
                 self.handle_key_pressed(event)
 
     def handle_key_pressed(self, event: Event) -> None:
-        active_key_actions = {
+
+        tetrimino_key_actions = {
             pygame.K_LEFT: self.move_tetrimino_left,
             pygame.K_RIGHT: self.move_tetrimino_right,
             pygame.K_DOWN: self.move_tetrimino_down,
             pygame.K_SPACE: self.handle_hard_drop,
-            pygame.K_ESCAPE: self.toggle_pause,
+            pygame.K_UP: self.rotate_right,
+            pygame.K_z: self.rotate_left
         }
 
-        paused_key_actions = {
+        system_key_actions = {
             pygame.K_ESCAPE: self.toggle_pause
         }
 
-        if self.paused:
-            if event.key in paused_key_actions:
-                paused_key_actions[event.key]()
-        else:
-            if event.key in active_key_actions:
-                active_key_actions[event.key]()
+        if event.key in tetrimino_key_actions and not self.paused:
+            tetrimino_key_actions[event.key]()
+
+        if event.key in system_key_actions:
+            system_key_actions[event.key]()
 
     def update_game_state(self) -> None:
         if not self.active_game:
@@ -203,6 +204,41 @@ class GameEngine:
         """
         while self.move_tetrimino_down():
             pass
+
+    def rotate_right(self):
+        if self.tetrimino is None:
+            return
+
+        new_relative_coords, kicks = self.tetrimino.rotate_right_fn()
+        self.rotate_tetrimino(new_relative_coords, kicks)
+
+    def rotate_left(self):
+        if self.tetrimino is None:
+            return
+
+        new_relative_coords, kicks = self.tetrimino.rotate_left_fn()
+        self.rotate_tetrimino(new_relative_coords, kicks)
+
+    def rotate_tetrimino(self, new_relative_coords, kicks):
+        if self.tetrimino is None:
+            return
+
+        kick_set = kicks[self.tetrimino.rotate_state]
+        x = self.tetrimino.x
+        y = self.tetrimino.y
+
+        for kick_x, kick_y in kick_set:
+            can_rotate = True
+            for rel_x, rel_y in new_relative_coords:
+                if not self.grid.is_available(
+                    x + kick_x + rel_x, y + kick_y + rel_y
+                ):
+                    can_rotate = False
+            if can_rotate:
+                self.tetrimino.update_position_and_coords(
+                    kick_x, kick_y, new_relative_coords
+                    )
+                break
 
     def place_tetrimino_on_grid(self) -> None:
         """

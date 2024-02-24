@@ -238,7 +238,7 @@ class GameEngine:
                   False otherwise
         """
         if self.tetrimino is None:
-            return
+            return False
 
         # loop through each kick to see if any are successful
         for kick_x, kick_y in kicks:

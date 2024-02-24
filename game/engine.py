@@ -11,7 +11,10 @@ from config import (
     AUTO_RESTART,
 )
 from .grid import Grid
-from .tetrimino import Tetrimino
+from .tetrimino import (
+    Tetrimino,
+    TETRIMINO_CLASSES
+)
 from .gui import GUI
 
 
@@ -39,24 +42,25 @@ class GameEngine:
                 self.handle_key_pressed(event)
 
     def handle_key_pressed(self, event: Event) -> None:
-        active_key_actions = {
+
+        tetrimino_key_actions = {
             pygame.K_LEFT: self.move_tetrimino_left,
             pygame.K_RIGHT: self.move_tetrimino_right,
             pygame.K_DOWN: self.move_tetrimino_down,
             pygame.K_SPACE: self.handle_hard_drop,
+            pygame.K_UP: self.rotate_right,
+            pygame.K_z: self.rotate_left
+        }
+
+        system_key_actions = {
             pygame.K_ESCAPE: self.toggle_pause
         }
 
-        paused_key_actions = {
-            pygame.K_ESCAPE: self.toggle_pause
-        }
+        if event.key in tetrimino_key_actions and not self.paused:
+            tetrimino_key_actions[event.key]()
 
-        if self.paused:
-            if event.key in paused_key_actions:
-                paused_key_actions[event.key]()
-        else:
-            if event.key in active_key_actions:
-                active_key_actions[event.key]()
+        if event.key in system_key_actions:
+            system_key_actions[event.key]()
 
     def update_game_state(self) -> None:
         if not self.active_game:
@@ -103,7 +107,7 @@ class GameEngine:
 
         # Overlay the current tetrimino on the grid
         if self.tetrimino is not None:
-            for x, y in self.tetrimino.coords:
+            for x, y in self.tetrimino.absolute_coords:
                 self.gui.draw_block(x, y, self.tetrimino.color)
 
         self.gui.draw_gridlines()
@@ -117,8 +121,8 @@ class GameEngine:
         """
         Returns a Tetrimino instance of a randomly selected class.
         """
-        random_tetrimino_class = random.choice(Tetrimino.__subclasses__())
-        tetrimino = random_tetrimino_class()
+        RandomTetriminoClass = random.choice(TETRIMINO_CLASSES)
+        tetrimino = RandomTetriminoClass()
         return tetrimino
 
     def check_and_handle_game_over(self) -> None:
@@ -149,7 +153,7 @@ class GameEngine:
             return False
 
         # Check if any cells of the Tetrimino are blocked from below
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x, y + 1):
                 return False  # Immediately return False if blocked
 
@@ -168,7 +172,7 @@ class GameEngine:
         if self.tetrimino is None:
             return False
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x - 1, y):
                 return False
 
@@ -187,7 +191,7 @@ class GameEngine:
         if self.tetrimino is None:
             return False
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             if not self.grid.is_available(x + 1, y):
                 return False
 
@@ -201,13 +205,67 @@ class GameEngine:
         while self.move_tetrimino_down():
             pass
 
+    def rotate_right(self):
+        """
+        Rotates the tetrimino right, and gets new relative coordinates and kick data
+        Updates rotate state if rotation is successful
+        """
+        if self.tetrimino is None:
+            return
+
+        new_relative_coords, kicks = self.tetrimino.rotate_right_fn()
+        if self.kick_tetrimino(new_relative_coords, kicks):
+            self.tetrimino.rotate_state = (self.tetrimino.rotate_state + 1) % 4
+
+    def rotate_left(self):
+        """
+        Rotates the tetrimino left, and checks kick positions
+        Updates rotate state if rotation is successful
+        """
+        if self.tetrimino is None:
+            return
+
+        new_relative_coords, kicks = self.tetrimino.rotate_left_fn()
+        if self.kick_tetrimino(new_relative_coords, kicks):
+            self.tetrimino.rotate_state = (self.tetrimino.rotate_state - 1) % 4
+
+    def kick_tetrimino(self, new_relative_coords: list, kicks: list) -> bool:
+        """
+        Checks each set of kicks to see where rotated tetrimino can be placed
+
+        Returns:
+            bool: True if the tetrimino is successfully rotated and placed;
+                  False otherwise
+        """
+        if self.tetrimino is None:
+            return
+
+        # loop through each kick to see if any are successful
+        for kick_x, kick_y in kicks:
+            can_rotate = True
+            for rel_x, rel_y in new_relative_coords:
+                if not self.grid.is_available(
+                    self.tetrimino.x + kick_x + rel_x,
+                    self.tetrimino.y + kick_y + rel_y
+                ):
+                    can_rotate = False
+
+            # rotate tetrimino if kick is successful
+            if can_rotate:
+                self.tetrimino.update_position_and_coords(
+                    kick_x, kick_y, new_relative_coords
+                )
+                break
+
+        return can_rotate
+
     def place_tetrimino_on_grid(self) -> None:
         """
         Places the current Tetrimino on the grid.
         """
         assert self.tetrimino is not None
 
-        for x, y in self.tetrimino.coords:
+        for x, y in self.tetrimino.absolute_coords:
             self.grid.set(x, y, self.tetrimino.color)
 
     def toggle_pause(self) -> None:

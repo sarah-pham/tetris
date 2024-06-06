@@ -14,3 +14,10 @@ class Grid:
 
     def set(self, x: int, y: int, color) -> None:
         self.grid[y][x] = color
+
+    def check_row_full(self, row: int) -> bool:
+        return all(cell is not None for cell in self.grid[row])
+
+    def clear_line(self, row_idx: int) -> None:
+        self.grid.pop(row_idx)
+        self.grid.insert(0, [None for _ in range(self.cols)])

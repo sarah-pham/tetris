@@ -57,6 +57,7 @@ class GameEngine:
             self.tetrimino = GameEngine.generate_tetrimino()
 
         self.handle_automatic_dropping()
+        self.handle_clear_lines()
         self.check_and_handle_game_over()
 
     def reset_game(self) -> None:
@@ -68,6 +69,7 @@ class GameEngine:
         self.grid = Grid()
         self.tetrimino = GameEngine.generate_tetrimino()
         self.last_drop_time = time.time()
+        self.points = 0
 
     def handle_automatic_dropping(self) -> None:
         """
@@ -195,3 +197,15 @@ class GameEngine:
 
     def has_current_tetrimino(self) -> bool:
         return self.tetrimino.active
+
+    def handle_clear_lines(self) -> None:
+        if self.tetrimino.active:
+            return
+
+        y_coords = set(y for _, y in self.tetrimino.coords)
+        lines_cleared = 0
+
+        for y in y_coords:
+            if self.grid.check_row_full(y):
+                self.grid.clear_line(y)
+                lines_cleared += 1

@@ -4,6 +4,7 @@ class Tetrimino:
     def __init__(self, coords=[], color=None):
         self.coords = coords
         self.color = color
+        self.active = True
 
     def move_down(self):
         """Increments the y-value of each tetrimino block.

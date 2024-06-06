@@ -42,3 +42,9 @@ TITLE_WIDTH = 330 # Width of TETRIS Title on screen (in pixels)
 PAUSED_ASPECT_RATIO = 6.5 # Aspect ratio of PAUSED graphic
 PAUSED_HEIGHT = 30 # Height of PAUSED graphic (in pixels)
 PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO # Width of PAUSED graphic (in pixels)
+
+# Points for clearing lines
+SINGLE_LINE_CLEAR_PTS = 40
+DOUBLE_LINE_CLEAR_PTS = 100
+TRIPLE_LINE_CLEAR_PTS = 300
+FOUR_LINE_CLEAR_PTS = 1200

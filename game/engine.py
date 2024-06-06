@@ -2,13 +2,16 @@ import pygame
 from pygame.event import Event
 import random
 import time
-from typing import Optional
 from config import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
     FPS,
     DROP_INTERVAL,
     AUTO_RESTART,
+    SINGLE_LINE_CLEAR_PTS,
+    DOUBLE_LINE_CLEAR_PTS,
+    TRIPLE_LINE_CLEAR_PTS,
+    FOUR_LINE_CLEAR_PTS
 )
 from .grid import Grid
 from .tetrimino import Tetrimino
@@ -62,10 +65,12 @@ class GameEngine:
         if not self.active_game:
             self.reset_game()
 
-        if self.tetrimino is None:
+        if not self.has_current_tetrimino():
             self.tetrimino = GameEngine.generate_tetrimino()
 
         self.handle_automatic_dropping()
+        self.handle_clear_lines()
+        self.handle_clear_lines()
         self.check_and_handle_game_over()
 
     def reset_game(self) -> None:
@@ -75,22 +80,22 @@ class GameEngine:
         self.active_game = True
         self.paused = False
         self.grid = Grid()
-        self.tetrimino: Optional[Tetrimino] = None
+        self.tetrimino = GameEngine.generate_tetrimino()
         self.last_drop_time = time.time()
+        self.points = 0
+        self.points = 0
 
     def handle_automatic_dropping(self) -> None:
         """
         Automatically moves the current Tetrimino down every DROP_INTERVAL
         seconds. If it cannot move further, the Tetrimino is placed on the grid,
-        marking its final position, and the current tetrimino is reset to None.
+        marking its final position, and the current tetrimino is marked as not active.
         """
-        assert self.tetrimino is not None
-
         if time.time() - self.last_drop_time >= DROP_INTERVAL:
             move_success = self.move_tetrimino_down()
             if not move_success:
                 self.place_tetrimino_on_grid()
-                self.tetrimino = None
+                self.tetrimino.active = False
 
             self.last_drop_time = time.time()
 
@@ -102,7 +107,7 @@ class GameEngine:
         self.gui.draw_board(self.grid.grid)
 
         # Overlay the current tetrimino on the grid
-        if self.tetrimino is not None:
+        if self.has_current_tetrimino():
             for x, y in self.tetrimino.coords:
                 self.gui.draw_block(x, y, self.tetrimino.color)
 
@@ -125,6 +130,9 @@ class GameEngine:
         """
         Checks and handles game over.
         """
+        if self.has_current_tetrimino():
+            return
+
         if self.check_game_over():
             self.active_game = False
             if not AUTO_RESTART:
@@ -145,9 +153,6 @@ class GameEngine:
             bool: True if the Tetrimino is successfully moved down; False
                   otherwise.
         """
-        if self.tetrimino is None:
-            return False
-
         # Check if any cells of the Tetrimino are blocked from below
         for x, y in self.tetrimino.coords:
             if not self.grid.is_available(x, y + 1):
@@ -165,9 +170,6 @@ class GameEngine:
             bool: True if the Tetrimino is successfully moved left; False
                   otherwise.
         """
-        if self.tetrimino is None:
-            return False
-
         for x, y in self.tetrimino.coords:
             if not self.grid.is_available(x - 1, y):
                 return False
@@ -184,9 +186,6 @@ class GameEngine:
             bool: True if the Tetrimino is successfully moved right; False
                   otherwise.
         """
-        if self.tetrimino is None:
-            return False
-
         for x, y in self.tetrimino.coords:
             if not self.grid.is_available(x + 1, y):
                 return False
@@ -205,8 +204,6 @@ class GameEngine:
         """
         Places the current Tetrimino on the grid.
         """
-        assert self.tetrimino is not None
-
         for x, y in self.tetrimino.coords:
             self.grid.set(x, y, self.tetrimino.color)
 
@@ -214,3 +211,31 @@ class GameEngine:
         self.paused = not self.paused
         if self.paused:
             self.gui.draw_pause()
+
+    def has_current_tetrimino(self) -> bool:
+        return self.tetrimino.active
+
+    def handle_clear_lines(self) -> None:
+        if self.tetrimino.active:
+            return
+
+        y_coords = set(y for _, y in self.tetrimino.coords)
+        lines_cleared = 0
+
+        for y in y_coords:
+            if self.grid.check_row_full(y):
+                self.grid.clear_line(y)
+                lines_cleared += 1
+
+        # Calculate points
+        if lines_cleared == 1:
+            self.points += SINGLE_LINE_CLEAR_PTS
+        elif lines_cleared == 2:
+            self.points += DOUBLE_LINE_CLEAR_PTS
+        elif lines_cleared == 3:
+            self.points += TRIPLE_LINE_CLEAR_PTS
+        elif lines_cleared == 4:
+            self.points += FOUR_LINE_CLEAR_PTS
+
+        if lines_cleared > 0:
+            print(f'Points: {self.points}')

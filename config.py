@@ -36,3 +36,9 @@ PAUSE_MASK_ALPHA = 110
 TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
 
 DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position
+
+# Points for clearing lines
+SINGLE_LINE_CLEAR_PTS = 40
+DOUBLE_LINE_CLEAR_PTS = 100
+TRIPLE_LINE_CLEAR_PTS = 300
+FOUR_LINE_CLEAR_PTS = 1200

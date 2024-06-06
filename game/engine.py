@@ -8,6 +8,10 @@ from config import (
     FPS,
     DROP_INTERVAL,
     AUTO_RESTART,
+    SINGLE_LINE_CLEAR_PTS,
+    DOUBLE_LINE_CLEAR_PTS,
+    TRIPLE_LINE_CLEAR_PTS,
+    FOUR_LINE_CLEAR_PTS
 )
 from .grid import Grid
 from .tetrimino import Tetrimino
@@ -58,6 +62,7 @@ class GameEngine:
 
         self.handle_automatic_dropping()
         self.handle_clear_lines()
+        self.handle_clear_lines()
         self.check_and_handle_game_over()
 
     def reset_game(self) -> None:
@@ -69,6 +74,7 @@ class GameEngine:
         self.grid = Grid()
         self.tetrimino = GameEngine.generate_tetrimino()
         self.last_drop_time = time.time()
+        self.points = 0
         self.points = 0
 
     def handle_automatic_dropping(self) -> None:
@@ -209,3 +215,16 @@ class GameEngine:
             if self.grid.check_row_full(y):
                 self.grid.clear_line(y)
                 lines_cleared += 1
+
+        # Calculate points
+        if lines_cleared == 1:
+            self.points += SINGLE_LINE_CLEAR_PTS
+        elif lines_cleared == 2:
+            self.points += DOUBLE_LINE_CLEAR_PTS
+        elif lines_cleared == 3:
+            self.points += TRIPLE_LINE_CLEAR_PTS
+        elif lines_cleared == 4:
+            self.points += FOUR_LINE_CLEAR_PTS
+
+        if lines_cleared > 0:
+            print(f'Points: {self.points}')

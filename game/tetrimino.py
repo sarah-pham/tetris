@@ -26,8 +26,8 @@ class Tetrimino:
         ]
 
     def move_down(self) -> None:
-        """
-        Increments the y-value of each tetrimino block.
+
+        """Increments the y-value of each tetrimino block.
         """
         self.y += 1
         for i in range(len(self.absolute_coords)):

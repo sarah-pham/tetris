@@ -2,13 +2,16 @@ import pygame
 from pygame.event import Event
 import random
 import time
-from typing import Optional
 from config import (
     SCREEN_WIDTH,
     SCREEN_HEIGHT,
     FPS,
     DROP_INTERVAL,
     AUTO_RESTART,
+    SINGLE_LINE_CLEAR_PTS,
+    DOUBLE_LINE_CLEAR_PTS,
+    TRIPLE_LINE_CLEAR_PTS,
+    FOUR_LINE_CLEAR_PTS
 )
 from .grid import Grid
 from .tetrimino import (
@@ -56,7 +59,7 @@ class GameEngine:
             pygame.K_ESCAPE: self.toggle_pause
         }
 
-        if event.key in tetrimino_key_actions and not self.paused:
+        if event.key in tetrimino_key_actions and not self.paused and self.tetrimino is not None:
             tetrimino_key_actions[event.key]()
 
         if event.key in system_key_actions:
@@ -79,24 +82,21 @@ class GameEngine:
         self.active_game = True
         self.paused = False
         self.grid = Grid()
-        self.tetrimino: Optional[Tetrimino] = None
+        self.tetrimino = GameEngine.generate_tetrimino()
         self.last_drop_time = time.time()
+        self.points = 0
 
     def handle_automatic_dropping(self) -> None:
-        """
-        Automatically moves the current Tetrimino down every DROP_INTERVAL
-        seconds. If it cannot move further, the Tetrimino is placed on the grid,
-        marking its final position, and the current tetrimino is reset to None.
-        """
-        assert self.tetrimino is not None
+        if self.tetrimino is None:
+            return
 
         if time.time() - self.last_drop_time >= DROP_INTERVAL:
             move_success = self.move_tetrimino_down()
             if not move_success:
-                self.place_tetrimino_on_grid()
-                self.tetrimino = None
+                self.handle_lock_tetrimino()
 
             self.last_drop_time = time.time()
+
 
     def draw_game_state(self) -> None:
         """
@@ -129,6 +129,9 @@ class GameEngine:
         """
         Checks and handles game over.
         """
+        if self.tetrimino is not None:
+            return
+
         if self.check_game_over():
             self.active_game = False
             if not AUTO_RESTART:
@@ -149,8 +152,7 @@ class GameEngine:
             bool: True if the Tetrimino is successfully moved down; False
                   otherwise.
         """
-        if self.tetrimino is None:
-            return False
+        assert self.tetrimino is not None
 
         # Check if any cells of the Tetrimino are blocked from below
         for x, y in self.tetrimino.absolute_coords:
@@ -203,7 +205,7 @@ class GameEngine:
         Drops the current tetrimino to the lowest possible position on the grid.
         """
         while self.move_tetrimino_down():
-            pass
+            continue
 
     def rotate_right(self):
         """
@@ -259,16 +261,36 @@ class GameEngine:
 
         return can_rotate
 
-    def place_tetrimino_on_grid(self) -> None:
-        """
-        Places the current Tetrimino on the grid.
-        """
+    def toggle_pause(self) -> None:
+        self.paused = not self.paused
+        if self.paused:
+            self.gui.draw_pause()
+
+    def handle_lock_tetrimino(self) -> None:
         assert self.tetrimino is not None
 
         for x, y in self.tetrimino.absolute_coords:
             self.grid.set(x, y, self.tetrimino.color)
 
-    def toggle_pause(self) -> None:
-        self.paused = not self.paused
-        if self.paused:
-            self.gui.draw_pause()
+        y_coords = set(y for _, y in self.tetrimino.absolute_coords)
+        lines_cleared = 0
+
+        for y in y_coords:
+            if self.grid.check_row_full(y):
+                self.grid.clear_line(y)
+                lines_cleared += 1
+
+        # Calculate points
+        if lines_cleared == 1:
+            self.points += SINGLE_LINE_CLEAR_PTS
+        elif lines_cleared == 2:
+            self.points += DOUBLE_LINE_CLEAR_PTS
+        elif lines_cleared == 3:
+            self.points += TRIPLE_LINE_CLEAR_PTS
+        elif lines_cleared == 4:
+            self.points += FOUR_LINE_CLEAR_PTS
+
+        if lines_cleared > 0:
+            print(f'Points: {self.points}')
+
+        self.tetrimino = None

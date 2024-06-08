@@ -11,7 +11,8 @@ from config import (
     SINGLE_LINE_CLEAR_PTS,
     DOUBLE_LINE_CLEAR_PTS,
     TRIPLE_LINE_CLEAR_PTS,
-    FOUR_LINE_CLEAR_PTS
+    FOUR_LINE_CLEAR_PTS,
+    REPEAT_DELAY
 )
 from .grid import Grid
 from .tetrimino import (
@@ -19,6 +20,7 @@ from .tetrimino import (
     TETRIMINO_CLASSES
 )
 from .gui import GUI
+from .event_handler import Action, EventHandler
 
 
 class GameEngine:
@@ -26,8 +28,19 @@ class GameEngine:
         self.running = True
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Tetris")
+        pygame.key.set_repeat(REPEAT_DELAY)
         self.gui = GUI(self.screen)
+        self.event_handler = EventHandler()
         self.reset_game()
+
+        self.tetrimino_action_map = {
+            Action.LEFT: self.move_tetrimino_left,
+            Action.RIGHT: self.move_tetrimino_right,
+            Action.DOWN: self.move_tetrimino_down,
+            Action.DROP: self.handle_hard_drop,
+            Action.ROTATE_RIGHT: self.rotate_right,
+            Action.ROTATE_LEFT: self.rotate_left
+        }
 
     def run(self) -> None:
         while self.running:
@@ -38,32 +51,17 @@ class GameEngine:
             pygame.time.Clock().tick(FPS)
 
     def handle_events(self):
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                self.running = False
-            elif event.type == pygame.KEYDOWN:
-                self.handle_key_pressed(event)
+        for action in self.event_handler.handle_events():
+            if action == Action.QUIT:
+                self.handle_quit_game()
+            elif action == Action.TOGGLE_PAUSE:
+                self.toggle_pause()
+            elif action in self.tetrimino_action_map:
+                if not self.paused and self.tetrimino is not None:
+                    self.tetrimino_action_map[action]()
 
-    def handle_key_pressed(self, event: Event) -> None:
-
-        tetrimino_key_actions = {
-            pygame.K_LEFT: self.move_tetrimino_left,
-            pygame.K_RIGHT: self.move_tetrimino_right,
-            pygame.K_DOWN: self.move_tetrimino_down,
-            pygame.K_SPACE: self.handle_hard_drop,
-            pygame.K_UP: self.rotate_right,
-            pygame.K_z: self.rotate_left
-        }
-
-        system_key_actions = {
-            pygame.K_ESCAPE: self.toggle_pause
-        }
-
-        if event.key in tetrimino_key_actions and not self.paused and self.tetrimino is not None:
-            tetrimino_key_actions[event.key]()
-
-        if event.key in system_key_actions:
-            system_key_actions[event.key]()
+    def handle_quit_game(self) -> None:
+        self.running = False
 
     def update_game_state(self) -> None:
         if not self.active_game:

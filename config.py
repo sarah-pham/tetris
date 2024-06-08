@@ -34,7 +34,9 @@ PAUSE_MASK_ALPHA = 110
 
 # Tetrimino configuration
 TETRIMINO_START_COLUMN = 3 # Initial grid column of new tetriminos
-DROP_INTERVAL = 0.2 # Time taken in seconds for tetrimino to drop down by 1 position
+DROP_INTERVAL = 0.5 # Time taken in seconds for tetrimino to drop down by 1 position
+INTIAL_REPEAT_DELAY = 2 # Initial delay before held keys trigger repeat events (number of frames)
+REPEAT_DELAY = 80 # Time interval between pygame.KEYDOWN events when keys are held down (milliseconds)
 
 # Graphics
 TITLE_HEIGHT = 50 # Height of TETRIS Title on screen (in pixels)

@@ -12,7 +12,6 @@ from config import (
     DOUBLE_LINE_CLEAR_PTS,
     TRIPLE_LINE_CLEAR_PTS,
     FOUR_LINE_CLEAR_PTS,
-    REPEAT_DELAY
 )
 from .grid import Grid
 from .tetrimino import (
@@ -28,7 +27,6 @@ class GameEngine:
         self.running = True
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         pygame.display.set_caption("Tetris")
-        pygame.key.set_repeat(REPEAT_DELAY)
         self.gui = GUI(self.screen)
         self.event_handler = EventHandler()
         self.reset_game()
@@ -51,7 +49,7 @@ class GameEngine:
             pygame.time.Clock().tick(FPS)
 
     def handle_events(self):
-        for action in self.event_handler.handle_events():
+        for action in self.event_handler.get_actions():
             if action == Action.QUIT:
                 self.handle_quit_game()
             elif action == Action.TOGGLE_PAUSE:

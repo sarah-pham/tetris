@@ -1,7 +1,7 @@
 import time
 from enum import Enum
 import pygame
-from pygame import QUIT, KEYDOWN, KEYUP, K_ESCAPE, K_LEFT, K_RIGHT, K_DOWN, K_SPACE, K_UP, K_z
+from pygame import QUIT, KEYDOWN, KEYUP, K_ESCAPE, K_LEFT, K_RIGHT, K_DOWN, K_SPACE, K_UP, K_z, K_RETURN
 from pygame.event import Event
 
 from config import INTIAL_REPEAT_INTERVAL, REPEAT_INTERVAL
@@ -15,6 +15,7 @@ class Action(Enum):
     ROTATE_LEFT = 6
     ROTATE_RIGHT = 7
     TOGGLE_PAUSE = 8
+    START = 9
 
 class EventHandler:
     def __init__(self) -> None:
@@ -25,7 +26,8 @@ class EventHandler:
             K_SPACE: Action.DROP,
             K_UP: Action.ROTATE_RIGHT,
             K_z: Action.ROTATE_LEFT,
-            K_ESCAPE: Action.TOGGLE_PAUSE
+            K_ESCAPE: Action.TOGGLE_PAUSE,
+            K_RETURN: Action.START
         }
         self.down_keys = []
 

@@ -1,5 +1,4 @@
 import os
-AUTO_RESTART = os.getenv('AUTO_RESTART', 'false').lower() == 'true'
 
 # Display settings
 SCREEN_WIDTH = 800 # Width of the entire game screen (pixels)

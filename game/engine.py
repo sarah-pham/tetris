@@ -1,5 +1,4 @@
 import pygame
-from pygame.event import Event
 import random
 import time
 from config import (
@@ -7,7 +6,6 @@ from config import (
     SCREEN_HEIGHT,
     FPS,
     DROP_INTERVAL,
-    AUTO_RESTART,
     SINGLE_LINE_CLEAR_PTS,
     DOUBLE_LINE_CLEAR_PTS,
     TRIPLE_LINE_CLEAR_PTS,
@@ -30,7 +28,12 @@ class GameEngine:
         pygame.display.set_caption("Tetris")
         self.gui = GUI(self.screen)
         self.event_handler = EventHandler()
-        self.reset_game()
+        self.grid = Grid()
+
+        self.active_game = False
+        self.paused = False
+        self.tetrimino = None
+        self.points = 0
 
         self.tetrimino_action_map = {
             Action.LEFT: self.move_tetrimino_left,
@@ -38,14 +41,18 @@ class GameEngine:
             Action.DOWN: self.move_tetrimino_down,
             Action.DROP: self.handle_hard_drop,
             Action.ROTATE_RIGHT: self.rotate_right,
-            Action.ROTATE_LEFT: self.rotate_left
+            Action.ROTATE_LEFT: self.rotate_left,
+            Action.START: self.reset_game
         }
+
+        print("Press RETURN to start :)")
 
     def run(self) -> None:
         while self.running:
             self.handle_events()
             if not self.paused:
-                self.update_game_state()
+                if self.active_game:
+                    self.update_game_state()
                 self.draw_game_state()
             pygame.time.Clock().tick(FPS)
 
@@ -56,16 +63,16 @@ class GameEngine:
             elif action == Action.TOGGLE_PAUSE:
                 self.toggle_pause()
             elif action in self.tetrimino_action_map:
-                if not self.paused and self.tetrimino is not None:
+                if action == Action.START:
+                    if not self.active_game:
+                        self.tetrimino_action_map[action]()
+                elif not self.paused and self.tetrimino is not None:
                     self.tetrimino_action_map[action]()
 
     def handle_quit_game(self) -> None:
         self.running = False
 
     def update_game_state(self) -> None:
-        if not self.active_game:
-            self.reset_game()
-
         if self.tetrimino is None:
             self.tetrimino = GameEngine.generate_tetrimino()
 
@@ -79,7 +86,6 @@ class GameEngine:
         """
         self.active_game = True
         self.paused = False
-        self.grid = Grid()
         self.tetrimino = GameEngine.generate_tetrimino()
         self.tetrimino_shadow_coords = []
         self.last_drop_time = time.time()
@@ -135,8 +141,8 @@ class GameEngine:
 
         if self.check_game_over():
             self.active_game = False
-            if not AUTO_RESTART:
-                self.running = False
+            self.grid = Grid()
+            print("You lose! Press RETURN to start a new game :)")
 
     def check_game_over(self) -> bool:
         for x in self.grid.grid[0]:
@@ -290,9 +296,6 @@ class GameEngine:
             self.points += TRIPLE_LINE_CLEAR_PTS
         elif lines_cleared == 4:
             self.points += FOUR_LINE_CLEAR_PTS
-
-        if lines_cleared > 0:
-            print(f'Points: {self.points}')
 
         self.tetrimino = None
 

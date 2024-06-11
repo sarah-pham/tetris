@@ -9,3 +9,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+    # active game =
+    # running = false -> quit
+    # pause

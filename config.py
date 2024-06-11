@@ -2,7 +2,7 @@ import os
 AUTO_RESTART = os.getenv('AUTO_RESTART', 'false').lower() == 'true'
 
 # Display settings
-SCREEN_WIDTH = 600 # Width of the entire game screen (pixels)
+SCREEN_WIDTH = 800 # Width of the entire game screen (pixels)
 SCREEN_HEIGHT = 800 # Height of the entire game screen (pixels)
 FPS = 60 # Frame rate per second limit
 
@@ -43,6 +43,21 @@ TITLE_WIDTH = 330 # Width of TETRIS Title on screen (in pixels)
 PAUSED_ASPECT_RATIO = 6.5 # Aspect ratio of PAUSED graphic
 PAUSED_HEIGHT = 30 # Height of PAUSED graphic (in pixels)
 PAUSED_WIDTH = PAUSED_HEIGHT * PAUSED_ASPECT_RATIO # Width of PAUSED graphic (in pixels)
+
+# Points graphics
+POINTS_SURFACE_SIZE = (100, 100)
+POINTS_SURFACE_POS = (30, 350)
+POINTS_SURFACE_COLOR = (0, 0, 0)
+POINTS_NUM_SURFACE_SIZE = (100, 50)
+POINTS_NUM_SURFACE_POS = (0, 50)
+POINTS_TEXT_POS = (10, 10)
+POINTS_NUM_POS = (10, 0)
+POINTS_TEXT_FONT = "Arial"
+POINTS_NUMBER_FONT = "Arial"
+POINTS_TEXT_SIZE = 30
+POINTS_NUMBER_SIZE = 25
+POINTS_TEXT_COLOR = (255, 255, 255)
+
 
 # Points for clearing lines
 SINGLE_LINE_CLEAR_PTS = 40

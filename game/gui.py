@@ -22,17 +22,34 @@ from config import (
     TITLE_WIDTH,
     PAUSED_WIDTH,
     PAUSED_HEIGHT,
+    POINTS_NUMBER_FONT,
+    POINTS_TEXT_FONT,
+    POINTS_NUMBER_SIZE,
+    POINTS_TEXT_SIZE,
+    POINTS_SURFACE_SIZE,
+    POINTS_SURFACE_POS,
+    POINTS_TEXT_COLOR,
+    POINTS_NUM_POS,
+    POINTS_TEXT_POS,
+    POINTS_SURFACE_COLOR,
+    POINTS_NUM_SURFACE_SIZE,
+    POINTS_NUM_SURFACE_POS
 )
 
 
 class GUI:
     def __init__(self, screen):
+        pygame.font.init()
         self.screen = screen
         self.board = Surface((BOARD_WIDTH, BOARD_HEIGHT))  # Surface for tetris grid and border
         self.board_pos = (BOARD_X, BOARD_Y)
         self.grid_surface = Surface((GRID_WIDTH, GRID_HEIGHT))  # Surface for Tetris grid
         self.grid_surface_pos = (GRID_BORDER_WIDTH, GRID_BORDER_WIDTH)
+        self.points_surface = Surface(POINTS_SURFACE_SIZE)
+        self.points_num_surface = Surface(POINTS_NUM_SURFACE_SIZE)
         self.load_images()
+        self.init_fonts()
+        self.draw_static_images()
 
     def load_images(self):
         """
@@ -67,6 +84,22 @@ class GUI:
             (BOARD_HEIGHT) / 4
         )
         self.paused_images.append((paused_image, paused_image_position))
+
+    def init_fonts(self) -> None:
+        # Initialise points font
+
+        self.points_text_font = pygame.font.SysFont(POINTS_TEXT_FONT, POINTS_TEXT_SIZE)
+        self.points_number_font = pygame.font.SysFont(POINTS_NUMBER_FONT, POINTS_NUMBER_SIZE)
+
+    def draw_static_images(self) -> None:
+        # Draw title
+        for img in self.active_images:
+            self.screen.blit(img[0], img[1])
+
+        # Draw points text
+        points_text_img = self.points_text_font.render("Points", True, POINTS_TEXT_COLOR)
+        self.points_surface.fill(POINTS_SURFACE_COLOR)
+        self.points_surface.blit(points_text_img, POINTS_TEXT_POS)
 
     def draw_board(self, grid):
         """
@@ -108,14 +141,6 @@ class GUI:
             rect=Rect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE)
         )
 
-    def draw_game_images(self):
-        """
-        Draws images loaded from files.
-        Images are saved as tuples in the format (image, position)
-        """
-        for img in self.active_images:
-            self.screen.blit(img[0], img[1])
-
     def draw_pause(self) -> None:
         """
         Draws a semi-transparent overlay on the grid and updates the display.
@@ -137,4 +162,12 @@ class GUI:
         """
         self.board.blit(self.grid_surface, self.grid_surface_pos)
         self.screen.blit(self.board, self.board_pos)
+        self.points_surface.blit(self.points_num_surface, POINTS_NUM_SURFACE_POS)
+        self.screen.blit(self.points_surface, POINTS_SURFACE_POS)
         display.flip()
+
+    def draw_points(self, points: int) -> None:
+        points_number_img = self.points_number_font.render(str(points), True, POINTS_TEXT_COLOR)
+
+        self.points_num_surface.fill(POINTS_SURFACE_COLOR)
+        self.points_num_surface.blit(points_number_img, POINTS_NUM_POS)

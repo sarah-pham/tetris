@@ -12,6 +12,7 @@ from config import (
     DOUBLE_LINE_CLEAR_PTS,
     TRIPLE_LINE_CLEAR_PTS,
     FOUR_LINE_CLEAR_PTS,
+    TETRIMINO_SHADOW_COLOR,
 )
 from .grid import Grid
 from .tetrimino import (
@@ -69,6 +70,7 @@ class GameEngine:
             self.tetrimino = GameEngine.generate_tetrimino()
 
         self.handle_automatic_dropping()
+        self.update_tetrimino_shadow()
         self.check_and_handle_game_over()
 
     def reset_game(self) -> None:
@@ -79,6 +81,7 @@ class GameEngine:
         self.paused = False
         self.grid = Grid()
         self.tetrimino = GameEngine.generate_tetrimino()
+        self.tetrimino_shadow_coords = []
         self.last_drop_time = time.time()
         self.points = 0
 
@@ -93,7 +96,6 @@ class GameEngine:
 
             self.last_drop_time = time.time()
 
-
     def draw_game_state(self) -> None:
         """
         Renders the current game state on the GUI.
@@ -101,8 +103,11 @@ class GameEngine:
         # Draw the Tetris grid with existing blocks
         self.gui.draw_board(self.grid.grid)
 
-        # Overlay the current tetrimino on the grid
+        # Overlay the current tetrimino and show on the grid
         if self.tetrimino is not None:
+            for x, y in self.tetrimino_shadow_coords:
+                self.gui.draw_block(x, y, TETRIMINO_SHADOW_COLOR)
+
             for x, y in self.tetrimino.absolute_coords:
                 self.gui.draw_block(x, y, self.tetrimino.color)
 
@@ -290,3 +295,20 @@ class GameEngine:
             print(f'Points: {self.points}')
 
         self.tetrimino = None
+
+    def update_tetrimino_shadow(self) -> None:
+        if self.tetrimino is None:
+            return
+
+        distance = 0
+
+        can_move_down = True
+        while can_move_down:
+            for x, y in self.tetrimino.absolute_coords:
+                if not self.grid.is_available(x, y + distance + 1):
+                    can_move_down = False
+
+            if can_move_down:
+                distance += 1
+
+        self.tetrimino_shadow_coords = [[x, y + distance] for x, y in self.tetrimino.absolute_coords]

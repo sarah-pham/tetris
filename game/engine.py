@@ -38,7 +38,7 @@ class GameEngine:
         self.tetrimino_action_map = {
             Action.LEFT: self.move_tetrimino_left,
             Action.RIGHT: self.move_tetrimino_right,
-            Action.DOWN: self.move_tetrimino_down,
+            Action.DOWN: self.handle_soft_drop,
             Action.DROP: self.handle_hard_drop,
             Action.ROTATE_RIGHT: self.rotate_right,
             Action.ROTATE_LEFT: self.rotate_left,
@@ -74,7 +74,7 @@ class GameEngine:
 
     def update_game_state(self) -> None:
         if self.tetrimino is None:
-            self.tetrimino = GameEngine.generate_tetrimino()
+            self.generate_tetrimino()
 
         self.handle_automatic_dropping()
         self.update_tetrimino_shadow()
@@ -86,7 +86,7 @@ class GameEngine:
         """
         self.active_game = True
         self.paused = False
-        self.tetrimino = GameEngine.generate_tetrimino()
+        self.generate_tetrimino()
         self.tetrimino_shadow_coords = []
         self.last_drop_time = time.time()
         self.points = 0
@@ -99,7 +99,6 @@ class GameEngine:
             move_success = self.move_tetrimino_down()
             if not move_success:
                 self.handle_lock_tetrimino()
-
             self.last_drop_time = time.time()
 
     def draw_game_state(self) -> None:
@@ -123,14 +122,13 @@ class GameEngine:
         # Update the display
         self.gui.update_display()
 
-    @staticmethod
-    def generate_tetrimino() -> Tetrimino:
+    def generate_tetrimino(self) -> None:
         """
         Returns a Tetrimino instance of a randomly selected class.
         """
         RandomTetriminoClass = random.choice(TETRIMINO_CLASSES)
-        tetrimino = RandomTetriminoClass()
-        return tetrimino
+        self.tetrimino = RandomTetriminoClass()
+        self.drop_points = 0
 
     def check_and_handle_game_over(self) -> None:
         """
@@ -211,8 +209,14 @@ class GameEngine:
         """
         Drops the current tetrimino to the lowest possible position on the grid.
         """
+        self.tetrimino_drop_distance = 0
         while self.move_tetrimino_down():
+            self.drop_points += 2
             continue
+
+    def handle_soft_drop(self) -> None:
+        self.move_tetrimino_down()
+        self.drop_points += 1
 
     def rotate_right(self):
         """
@@ -287,7 +291,7 @@ class GameEngine:
                 self.grid.clear_line(y)
                 lines_cleared += 1
 
-        # Calculate points
+        # Add points for line clears
         if lines_cleared == 1:
             self.points += SINGLE_LINE_CLEAR_PTS
         elif lines_cleared == 2:
@@ -296,6 +300,10 @@ class GameEngine:
             self.points += TRIPLE_LINE_CLEAR_PTS
         elif lines_cleared == 4:
             self.points += FOUR_LINE_CLEAR_PTS
+
+        # Add points for soft/ hard drop
+        if lines_cleared > 0:
+            self.points += self.drop_points
 
         self.tetrimino = None
 
